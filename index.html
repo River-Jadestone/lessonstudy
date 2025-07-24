@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>연구수업 지도안 종합 슬라이드쇼</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+        }
+        #home-slide, .slide-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+        #home-slide.active {
+            display: flex;
+        }
+        .slide-container.active {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
+        }
+        .slide {
+            display: none;
+            grid-column: 1 / -1;
+            grid-row: 1 / -1;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            /* 클릭 비활성화 */
+            pointer-events: none;
+            z-index: 1;
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            animation: fadeIn 0.5s ease-in-out;
+            /* 클릭 활성화 */
+            pointer-events: auto;
+            z-index: 10;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .topic-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .aspect-w-16 { position: relative; padding-bottom: 56.25%; }
+        .aspect-h-9 { }
+        .aspect-w-16 > *, .aspect-h-9 > * { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <div class="w-full max-w-7xl h-[95vh] max-h-[850px] bg-white shadow-2xl rounded-2xl overflow-hidden relative flex flex-col">
+        
+        <!-- Slides Wrapper -->
+        <div id="slides-wrapper" class="flex-grow relative">
+
+            <!-- Home Slide (Table of Contents) -->
+            <div id="home-slide" class="active flex-col items-center justify-center p-8 lg:p-12">
+                <h1 class="text-4xl lg:text-5xl font-black text-gray-800 mb-4">연구수업 지도안 발표</h1>
+                <p class="text-xl text-gray-600 mb-12">발표할 주제를 선택해주세요.</p>
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl">
+                    <!-- Topic Cards -->
+                    <div class="topic-card bg-blue-500 text-white p-6 rounded-xl cursor-pointer" data-topic="mr-onewheeler">
+                        <i class="fas fa-bicycle text-4xl mb-4"></i>
+                        <h2 class="text-2xl font-bold">미스터 원휠러</h2>
+                        <p class="mt-2 opacity-90">크랭크와 운동 변환</p>
+                    </div>
+                    <div class="topic-card bg-green-500 text-white p-6 rounded-xl cursor-pointer" data-topic="line-walk">
+                        <i class="fas fa-project-diagram text-4xl mb-4"></i>
+                        <h2 class="text-2xl font-bold">라인 워크</h2>
+                        <p class="mt-2 opacity-90">유니버설 조인트와 각도</p>
+                    </div>
+                    <div class="topic-card bg-red-500 text-white p-6 rounded-xl cursor-pointer" data-topic="dinosaur">
+                        <i class="fas fa-pastafarianism text-4xl mb-4"></i>
+                        <h2 class="text-2xl font-bold">재미있는 공룡</h2>
+                        <p class="mt-2 opacity-90">베벨기어와 방향 전환</p>
+                    </div>
+                    <div class="topic-card bg-purple-500 text-white p-6 rounded-xl cursor-pointer" data-topic="slow-mover">
+                        <i class="fas fa-wind text-4xl mb-4"></i>
+                        <h2 class="text-2xl font-bold">슬로우 무버</h2>
+                        <p class="mt-2 opacity-90">공압 장치의 원리</p>
+                    </div>
+                    <div class="topic-card bg-yellow-500 text-white p-6 rounded-xl cursor-pointer" data-topic="pinball">
+                        <i class="fas fa-bowling-ball text-4xl mb-4"></i>
+                        <h2 class="text-2xl font-bold">핀볼 게임</h2>
+                        <p class="mt-2 opacity-90">탄성과 다양한 플리퍼</p>
+                    </div>
+                    <div class="topic-card bg-indigo-500 text-white p-6 rounded-xl cursor-pointer" data-topic="target-practice">
+                        <i class="fas fa-bullseye text-4xl mb-4"></i>
+                        <h2 class="text-2xl font-bold">목표물 맞추기</h2>
+                        <p class="mt-2 opacity-90">다양한 기계 장치</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Topic slides will be injected here by JS -->
+        </div>
+
+        <!-- Navigation -->
+        <div id="navigation" class="bg-gray-800 text-white p-2 flex justify-between items-center hidden">
+            <button id="homeBtn" class="px-4 py-2 rounded-lg hover:bg-gray-700"><i class="fas fa-home mr-2"></i>목차로</button>
+            <div>
+                <button id="prevBtn" class="px-4 py-2 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-arrow-left"></i> 이전
+                </button>
+                <span id="slide-counter" class="text-sm mx-4"></span>
+                <button id="nextBtn" class="px-4 py-2 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    다음 <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+const topicsData = {
+    'mr-onewheeler': {
+        title: '미스터 원휠러',
+        mainQuestion: '크랭크 구조를 관찰하고, 회전 운동이 어떻게 직선 운동으로 바뀌는지 이해해요.',
+        keyConcepts: [ { term: '크랭크 구조', description: '회전 운동을 왕복 운동으로 바꾸거나, 그 반대로 바꿔주는 장치예요.' }, { term: '회전 운동', description: '물체가 한 점을 중심으로 빙글빙글 도는 움직임이에요.' }, { term: '직선 운동', description: '물체가 곧은 길을 따라 나아가는 움직임이에요.' } ],
+        curiosityHook: '"자전거 페달을 동그랗게 돌리는데, 자전거는 어떻게 앞으로 쭉 나아갈까요?"',
+        tasks: [ '미스터 원 휠러 모델을 조립했어요.', '크랭크를 손으로 돌려봤어요.', '팔과 다리의 움직임을 관찰했어요.', '움직임을 그림이나 화살표로 표현했어요.'],
+        principle: '손잡이를 잡고 돌리는 <strong>회전 운동</strong>이, 연결된 막대를 통해 팔다리를 위아래로 움직이는 <strong>직선 운동</strong>으로 바뀌었어요! 이것이 바로 <strong>크랭크 구조</strong>의 원리입니다.',
+        quizzes: [ "바퀴를 돌리면 팔과 다리가 같이 움직이는 모습이 신기했나요? 어떤 점이 가장 재미있었나요?", "미스터 원휠러가 서커스에서 묘기를 부린다면, 어떤 멋진 묘기를 보여줄까요?", "이 로봇에게 멋진 이름을 지어주고, 어떤 로봇인지 소개해볼까요?" ],
+        spikeMission: "앞으로 나아가며 색을 감지하는 미션이에요! 로봇이 앞으로 나아가면서 바닥에 있는 색을 감지해, 라이트 매트릭스에 색을 표현하거나 소리를 내도록 코딩해볼 거예요!",
+        themeColor: 'blue',
+        media1: { type: 'image', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/2021_Arlington_Independence_Day_Parade_027_%28We_Ride_Unicycles_of_North_Texas%29.jpg/640px-2021_Arlington_Independence_Day_Parade_027_%28We_Ride_Unicycles_of_North_Texas%29.jpg' },
+        media4: { type: 'youtube', url: 'https://www.youtube.com/embed/BOCLU_BkF0w?si=hhnWtgrTFRL_dQjM' },
+        media5: { type: 'image', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Slider-Crank_Mechanism.gif/640px-Slider-Crank_Mechanism.gif' },
+        media6: { type: 'youtube', url: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Crank_operation.png' },
+        media8: { type: 'image', url: 'https://placehold.co/400x250/e2e8f0/4a5568?text=블록+코딩+예시' }
+    },
+    'line-walk': {
+        title: '라인 워크',
+        mainQuestion: '유니버설 조인트는 어떻게 힘을 전달하고, 줄의 각도는 줄타기 속도에 어떤 영향을 미칠까요?',
+        keyConcepts: [ { term: '유니버설 조인트', description: '두 개의 축이 서로 다른 각도로 있어도, 회전하는 힘을 전달해주는 신기한 관절 장치예요.' }, { term: '각도', description: '줄이 얼마나 기울어졌는지를 나타내는 말이에요.' }, { term: '속도', description: '물체가 얼마나 빠른지 알려주는 말이에요.' } ],
+        curiosityHook: '"자동차 바퀴는 어떻게 꺾인 상태에서도 힘을 전달받아 계속 돌아갈 수 있을까요?"',
+        tasks: [ '아슬아슬 줄타기 \'라인 워크\' 모델을 완성했어요.', '크랭크를 돌려서 유니버설 조인트가 어떻게 움직이는지 관찰했어요.', '줄의 각도를 좁게/넓게 만들고 속도를 확인했어요.', '언제 가장 빠르게 움직이는지 나만의 결론을 내렸어요.'],
+        principle: '서로 다른 각도로 꺾여 있는 두 축도 <strong>유니버설 조인트</strong>를 통해 회전하는 힘을 그대로 전달할 수 있어요. 이 원리는 자동차, 로봇 팔 등 다양한 기계에 사용됩니다.',
+        quizzes: [ "줄의 각도가 좁을 때와 넓을 때, 언제 주인공이 더 빨리 움직였나요?", "유니버설 조인트처럼 꺾여서 힘을 전달하는 우리 몸의 관절은 어디일까요?", "이 줄타기 로봇이 놀이공원에 있다면 어떤 이름의 놀이기구일까요?" ],
+        spikeMission: "이번에는 스파이크 에센셜의 모터로 크랭크를 자동으로 돌려봅시다! 컬러센서를 이용해서 감지되는 색상에 따라 줄의 각도를 바꿔봅시다.",
+        themeColor: 'green',
+        media1: { type: 'image', url: 'https://placehold.co/500x250/e2e8f0/4a5568?text=1.+모델+사진' },
+        media4: { type: 'image', url: 'https://placehold.co/500x300/e2e8f0/4a5568?text=2.+활동+사진' },
+        media5: { type: 'image', url: 'https://placehold.co/600x300/e2e8f0/4a5568?text=3.+결과물+사진' },
+        media6: { type: 'image', url: 'https://placehold.co/400x300/e2e8f0/4a5568?text=4.+원리+다이어그램' },
+        media8: { type: 'image', url: 'https://placehold.co/400x250/e2e8f0/4a5568?text=블록+코딩+예시' }
+    },
+    // ... (다른 주제들도 동일한 media 구조로 수정 가능) ...
+};
+
+const slidesWrapper = document.getElementById('slides-wrapper');
+const homeSlide = document.getElementById('home-slide');
+const navigation = document.getElementById('navigation');
+const topicCards = document.querySelectorAll('.topic-card');
+
+const homeBtn = document.getElementById('homeBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const slideCounter = document.getElementById('slide-counter');
+
+let currentTopic = null;
+let currentSlideIndex = 0;
+let slides = [];
+
+function createMediaHtml(mediaData, altText) {
+    if (!mediaData || !mediaData.url) {
+        return `<div class="w-full h-full bg-gray-200 flex items-center justify-center rounded-lg"><span class="text-gray-500">미디어 없음</span></div>`;
+    }
+
+    if (mediaData.type === 'youtube') {
+        // 자동재생 및 기타 파라미터를 제거하여 안정성을 높입니다.
+        const videoSrc = mediaData.url;
+        return `<div class="w-full aspect-w-16 aspect-h-9 bg-black rounded-lg overflow-hidden">
+                    <iframe src="${videoSrc}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full"></iframe>
+                </div>`;
+    } else { // 'image' or default
+        return `<img src="${mediaData.url}" alt="${altText}" class="rounded-lg w-full h-auto object-contain max-h-[300px]">`;
+    }
+}
+
+
+function createSlidesForTopic(topicKey) {
+    const data = topicsData[topicKey];
+    if (!data) return ''; // 데이터가 없는 경우 방지
+    
+    const color = data.themeColor;
+    let conceptsHTML = data.keyConcepts.map(c => `<li class="text-lg"><strong class="text-${color}-600">${c.term}:</strong> ${c.description}</li>`).join('');
+    let tasksHTML = data.tasks.map(t => `<li class="text-lg text-gray-700">${t}</li>`).join('');
+    let quizzesHTML = data.quizzes.map(q => `<div class="bg-white p-4 rounded-lg shadow-inner"><p class="text-lg text-gray-700">${q}</p></div>`).join('');
+
+    const mediaHtml1 = createMediaHtml(data.media1, `${data.title} 모델`);
+    const mediaHtml4 = createMediaHtml(data.media4, '학생 활동');
+    const mediaHtml5 = createMediaHtml(data.media5, '학생 결과물');
+    const mediaHtml6 = createMediaHtml(data.media6, '원리 다이어그램');
+    const mediaHtml8 = createMediaHtml(data.media8, '블록 코딩 예시');
+
+    const container = document.createElement('div');
+    container.className = 'slide-container';
+    container.dataset.topicContainer = topicKey;
+
+    container.innerHTML = `
+        <!-- 1. Title -->
+        <div class="slide flex flex-col items-center justify-center p-8 text-center bg-${color}-600 text-white">
+            <p class="text-xl font-bold mb-2">수업 시작</p>
+            <h1 class="text-4xl lg:text-5xl font-black mb-4">${data.title}</h1>
+            <h2 class="text-2xl lg:text-3xl font-bold max-w-4xl">${data.mainQuestion}</h2>
+            <div class="w-full h-60 bg-white/20 rounded-xl flex items-center justify-center my-6">
+                 ${mediaHtml1.replace('max-h-[300px]', 'max-h-full')}
+            </div>
+        </div>
+        <!-- 2. Goals -->
+        <div class="slide flex flex-col items-center justify-center p-8 bg-gray-50">
+            <div class="w-full max-w-4xl">
+                <h2 class="text-3xl font-black text-gray-800 mb-8 text-center">무엇을 배울까요? (수업 목표)</h2>
+                <div class="bg-white p-8 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold text-${color}-600 mb-4">탐구 목표</h3>
+                    <p class="text-xl mb-6">${data.mainQuestion}</p>
+                    <h3 class="text-xl font-bold text-${color}-600 mb-4">핵심 개념</h3>
+                    <ul class="space-y-3">${conceptsHTML}</ul>
+                </div>
+            </div>
+        </div>
+        <!-- 3. Curiosity -->
+        <div class="slide flex flex-col items-center justify-center p-8 text-center">
+            <h2 class="text-3xl font-black text-gray-800 mb-8">왜 그럴까? (호기심 유발)</h2>
+            <div class="w-full max-w-3xl bg-yellow-100 border-l-4 border-yellow-400 p-8 rounded-r-lg">
+                <p class="text-2xl font-bold text-gray-700">${data.curiosityHook}</p>
+            </div>
+        </div>
+        <!-- 4. Modeling -->
+        <div class="slide flex flex-col items-center justify-center p-8">
+            <div class="w-full max-w-5xl">
+                <h2 class="text-3xl font-black text-gray-800 mb-8 text-center">만들고 움직여봐요! (모델링 및 관찰)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+                        <ul class="list-disc list-inside space-y-3">${tasksHTML}</ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center">
+                         ${mediaHtml4}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 5. Exploration -->
+        <div class="slide flex flex-col items-center justify-center p-8 text-center">
+            <h2 class="text-3xl font-black text-gray-800 mb-8">원리를 찾아봐요! (탐구 및 표현)</h2>
+            <p class="text-xl max-w-3xl mb-6">관찰한 내용을 바탕으로 원리를 찾아가는 과정입니다. 학생들이 직접 움직임을 표현한 결과물을 사진으로 제시하며 토의를 유도할 수 있습니다.</p>
+            <div class="bg-white p-4 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center">
+                ${mediaHtml5}
+            </div>
+        </div>
+        <!-- 6. Principle -->
+        <div class="slide flex flex-col items-center justify-center p-8 text-center bg-${color}-50">
+            <h2 class="text-3xl font-black text-gray-800 mb-8">아하, 그렇구나! (핵심 원리 설명)</h2>
+            <div class="flex items-center gap-8 max-w-5xl">
+                <div class="w-1/2 bg-white p-6 rounded-xl shadow-lg">
+                    <p class="text-xl text-left">${data.principle}</p>
+                </div>
+                <div class="w-1/2 flex items-center justify-center">
+                    ${mediaHtml6}
+                </div>
+            </div>
+        </div>
+        <!-- 7. Expansion -->
+        <div class="slide flex flex-col items-center justify-center p-8 bg-gray-50">
+            <div class="w-full max-w-4xl">
+                <h2 class="text-3xl font-black text-gray-800 mb-8 text-center">생각을 키워요! (창의력 확장)</h2>
+                <div class="space-y-4">${quizzesHTML}</div>
+            </div>
+        </div>
+        <!-- 8. Coding -->
+        <div class="slide flex flex-col items-center justify-center p-8 bg-${color}-100">
+             <div class="w-full max-w-5xl text-center">
+                <h2 class="text-3xl font-black text-${color}-800 mb-8">더 나아가기 (코딩 융합 확장)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-white/70 p-6 rounded-xl shadow-md h-full">
+                        <h3 class="text-xl font-bold text-${color}-600 mb-3">융합 미션</h3>
+                        <p class="text-lg mb-4">${data.spikeMission}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center">
+                        ${mediaHtml8}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 9. Summary -->
+        <div class="slide flex flex-col items-center justify-center p-8">
+            <h2 class="text-3xl font-black text-gray-800 mb-8 text-center">오늘 무엇을 배웠나요? (정리)</h2>
+            <div class="w-full max-w-4xl bg-gray-100 p-8 rounded-xl">
+                <ul class="list-disc list-inside space-y-4 text-xl">
+                    <li><strong class="text-${color}-600">${data.keyConcepts[0].term}</strong>의 원리를 탐구하고, 실생활 속 사례와 연결했습니다.</li>
+                    <li>관찰과 표현을 통해 복잡한 움직임 속 규칙을 찾아내는 <strong>과학적 탐구 능력</strong>을 길렀습니다.</li>
+                    <li>상상력을 더해 나만의 이야기를 만들고, 코딩으로 확장하는 <strong>창의융합 능력</strong>을 경험했습니다.</li>
+                </ul>
+            </div>
+        </div>
+        <!-- 10. Q&A -->
+        <div class="slide flex flex-col items-center justify-center p-8 text-center bg-gray-700 text-white">
+            <h2 class="text-5xl font-black mb-6">감사합니다</h2>
+            <p class="text-3xl">질의응답 및 토의</p>
+        </div>
+    `;
+    return container;
+}
+
+// Generate and append all slide containers at the beginning
+Object.keys(topicsData).forEach(key => {
+    slidesWrapper.appendChild(createSlidesForTopic(key));
+});
+
+function showSlide() {
+    slides.forEach(slide => slide.classList.remove('active'));
+    slides[currentSlideIndex].classList.add('active');
+    slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+    prevBtn.disabled = currentSlideIndex === 0;
+    nextBtn.disabled = currentSlideIndex === slides.length - 1;
+}
+
+function selectTopic(topicKey) {
+    currentTopic = topicKey;
+    homeSlide.classList.remove('active');
+    
+    document.querySelectorAll('.slide-container').forEach(c => c.classList.remove('active'));
+    const container = document.querySelector(`[data-topic-container="${topicKey}"]`);
+    container.classList.add('active');
+
+    slides = Array.from(container.querySelectorAll('.slide'));
+    currentSlideIndex = 0;
+    navigation.classList.remove('hidden');
+    navigation.classList.add('flex');
+    showSlide();
+}
+
+function goHome() {
+    currentTopic = null;
+    document.querySelectorAll('.slide-container').forEach(c => {
+        if (!c.id.includes('home-slide')) {
+            c.classList.remove('active');
+        }
+    });
+    homeSlide.classList.add('active');
+    navigation.classList.add('hidden');
+    navigation.classList.remove('flex');
+}
+
+function nextSlide() {
+    if (currentSlideIndex < slides.length - 1) {
+        currentSlideIndex++;
+        showSlide();
+    }
+}
+
+function prevSlide() {
+    if (currentSlideIndex > 0) {
+        currentSlideIndex--;
+        showSlide();
+    }
+}
+
+topicCards.forEach(card => {
+    card.addEventListener('click', () => {
+        selectTopic(card.dataset.topic);
+    });
+});
+
+homeBtn.addEventListener('click', goHome);
+nextBtn.addEventListener('click', nextSlide);
+prevBtn.addEventListener('click', prevSlide);
+
+document.addEventListener('keydown', (e) => {
+    if (currentTopic) {
+        if (e.key === 'ArrowRight') nextSlide();
+        else if (e.key === 'ArrowLeft') prevSlide();
+        else if (e.key === 'Escape') goHome();
+    }
+});
+</script>
+</body>
+</html>
